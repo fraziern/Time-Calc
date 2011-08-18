@@ -2,157 +2,132 @@ package com.nickfrazier.timecalc;
 
 // See TimeCalc.java for general documentation
 
-import java.text.ParseException;
-import java.util.Calendar;
 
 public class ParseTime {
 
-    // This class is used to parse a Calendar object, that may 
+    // This class is used to parse tokens from LexTime, that may 
     // or may not be fully defined.
 
-    // Fields: ...
+    // Fields:
+    //  a public list of n TenthTimes
+    //  a public list of n-1 operators 
+    //  a private list of parsed strings
 
     // Methods:
-    //      Calendar readTime(String time) - sets the fields by parsing time.
-    //              Each time readTime is called, the fields are reset and set to 
-    //              new values.  Returns Calendar instance.
-    //      String[] tokenizeTime(String time) - tokenizes a '1200a-110a' style string
+    //      
+    // 
+    // we need something that will take strings and convert to operators and TenthTimes
+    // and I think that's it.
+    // TODO: Some validation and error handling too, but that's for later.
+    // 
 
-    private char[] digits = new char[4];
-    private int digitCount;
+  List<String> tokens;
+  List<TenthTime> times;
+  List<Int> operators;
+  int numTimes;
 
-    private int mins;
-    private int hours;
-    private int ap;
-    private boolean tenths = false;  // is this a time in hours-mins, or in tenths
+  public static final int   // operators
+  ADD = 0,
+  SUB = 1;
 
+  
+  public ParseTime() {  // Constructor
+  }
 
-    public boolean isTenths() { return tenths; }
+  // getters for operators and times
+  public List<Int> getOperators { return this.operators }; // Is this OK? Does it return the right thing
 
-    public boolean isAMPMKnown() {
-        return (ap > -1);
+  public List<TenthTime> getTimes { return this.times };
+
+  public void readTime(List<String> in) {
+
+    // init
+    times = new ArrayList<TenthTime>;
+    operators = new ArrayList<Int>;
+    numTimes = in.size();
+    tokens = in;
+
+    // step through 'in'
+    //  for each entry, if it's an operator, add it to operators.
+    //  (if we just had an operator, ignore it.)
+    //  If it's a string entry, parse it into a TenthTime.
+
+    for(i = 0; i < numTimes; i++) {
+      String s = tokens.get(i);
+      if(s == "+") operators.add(ADD);
+      else if(s == "-") operators.add(SUB);
+      
+        // We have a time. First scan to see if it's absolute or relative.
+      else if(s.matches(".*\..*"))   // regex that looks for at least one period
+        times.add(readTenths(s));
+      else times.add(readHrsMins(s));
     }
+        
 
-    public Calendar readTime(String time1) throws ParseException {
-
-        // Validation
-        /*            if(time1.length() < 3) {
-
-                // a time of '5' should mean 5 o'clock.  For now just throw an exception
-
-                throw new ParseException("time too short!", 0);
-
-            }
-         */
-
-        // Init
-
-        digitCount = 0;    // counts # of digits in time.
-        ap = -1; 
-        hours = 0;
-        mins = 0;
-
-        time1 = time1.toUpperCase();
-
-        Calendar cal = Calendar.getInstance();
-        cal.clear();
-
-        // First find out if we have tenths or hours:mins
-        for (int i = 0; (i < time1.length()) && (tenths == false); i++) {
-            if (time1.charAt(i) == '.') tenths = true;
-        }
-
-        // branch off here
-        if (tenths) {
-            readTenths(time1, cal);
-        } else {
-            readHoursMins(time1, cal);
-        }
-
-        return cal;
-
-    }
-
-    private void readTenths(String time2, Calendar cal2) {
+  }
+    private TenthTime readTenths(String time) {
 
         float tenths;
         int tenthsHours, tenthsMins;
 
         // Parse out tenths String
-        tenths = Float.valueOf(time2).floatValue();
+        tenths = Float.valueOf(time).floatValue();
         tenthsHours = (int) Math.floor(tenths);
         tenthsMins = Math.round((tenths - (float) tenthsHours) * 10 * 6);
 
-        // Build cal
-        cal2.set(Calendar.HOUR_OF_DAY, (int) tenthsHours);
-        cal2.set(Calendar.MINUTE, (int) tenthsMins);
-
+        // Build TenthTime
+        return new TenthTime(tenthsHours, tenthsMins, TenthTime.REL);
     }
 
-    private void readHoursMins(String time, Calendar cal) {
-        // Find state of AM/PM, if possible
 
-        for(int i=0; ((i < time.length()) && (ap == -1)); i++) {
-            if (time.charAt(i) == 'A') ap = Calendar.AM;
-            else if (time.charAt(i) == 'P') ap = Calendar.PM;
-        }
+    private TenthTime readHoursMins(String time) {
+        
+        int 
+        hrs = 0,
+        mins = 0,
+        digitCount = 0;
+        char[] digits = new char[4];
+        
+
+        // Find state of AM/PM the easy way, if possible
+
+        boolean isPM = false;
+        
+        if(time.matches(".*[pP].*")) isPM = true;
 
         // Extract hours and mins
         // There are several ways the time
         // could be written: "1202", "12:02", "1202p M", etc.
-        // The defining characteristic is that there are always 3 or 4 digits.
-        // So we can just iterate through, extracting the digits until we end.
+        // or even "1" for 1 oclock. or 121 for 1:21.
+        // If there's 1 or 2 digits, it's hours only.
+        // If there's 3 or 4, last 2 digits are mins.
 
-        // The digits go into a 4-element char array.
-
-        // Note, this could also possibly be done by storing the offset
-        //  for the minutes, and the offset and length for the hours
+        // First extract the digits.
 
         // TODO throw ParseException when there are too many digits.
 
-        for(int i=0; ( (i < time.length()) && (digitCount < 4) ); i++) {
-            if (Character.isDigit(time.charAt(i))) {
-                digits[digitCount++] = time.charAt(i);
-            } 
+        for(int i=0; ( (i < time.length()) && (digitCount < 4)); i++) {
+            if (Character.isDigit(time.charAt(i))) 
+                digits[digitCount++] = Char.valueOf(time.charAt(i));
         }
 
-        if (digitCount < 3) {
-            // TODO if only 1 or 2 digits, we have an hour only.
-            System.out.println("Not enough digits!");
+        // Then process the hours, whether we have minutes or not.
+        if(digitCount == 1 || digitCount == 3) hrs = digits[0];
+        else hrs = digits[0]*10+digits[1];
+        // Preserves 24-h notation, if given.
 
-        }
+        if(isPM && hrs < 13) hrs += 12;
+       
+        // Then process the minutes, if we have 3 or 4 digits.
+        if (digitCount > 2) 
+          mins = digits[digitCount-2]*10+digits[digitCount-1];
 
-        // If we have 3 total digits, then there is only 1 hour digit.
-        digitCount -= 2;
+        // Create TenthTime
+        return new TenthTime(hrs, mins, TenthTime.ABS);
 
-        if (digitCount <= 2) {
-            hours = Integer.parseInt(String.valueOf(digits, 0, digitCount));
-            mins = Integer.parseInt(String.valueOf(digits, digitCount, 2));
-        } else {
-            System.out.println("Too many digits!");
-
-        }
-
-        // Create cal
-
-        cal.set(Calendar.MINUTE, mins);
-
-        if (ap != -1) cal.set(Calendar.AM_PM, ap); // if AM/PM undefined, leave it so.
-        if ((ap == Calendar.PM) && (hours < 12)) {
-            cal.set(Calendar.HOUR_OF_DAY, hours+12);
-        } else {
-            cal.set(Calendar.HOUR_OF_DAY, hours);
-        }
 
 
         // TODO: Test for 24-hour notation
 
     }
-
-    public String[] tokenizeTime(String calc) {
-
-        return calc.split("-");
-
-    }
-
 }

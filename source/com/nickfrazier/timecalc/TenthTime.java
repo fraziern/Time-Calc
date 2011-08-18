@@ -9,6 +9,10 @@ package com.nickfrazier.timecalc;
 //  ABS - absolute time, like 12:30PM
 //  REL - relative time, like 8.2 - aka billable hours
 
+// TODO: comparator method
+// TODO: less than and greater than methods
+// TODO: add and subtract methods
+
 public class TenthTime {
 
   private int hrs;
