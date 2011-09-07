@@ -1,17 +1,18 @@
 package com.nickfrazier.timecalc;
 
 // This is the start of some work on refactoring TimeCalc.
-// We're starting with a time object, that holds 3 bits of information:
+// We're starting with a time object, that holds 3 pieces of information:
 //
 // hrs (in 24-hour format)
 // mins (0-59)
 // type (ABS, REL) 
-//  ABS - absolute time, like 12:30PM
-//  REL - relative time, like 8.2 - aka billable hours
+//  ABS - flag signaling that other methods should treat like absolute time, like 12:30PM
+//  REL - flag signaling that other methods treat like relative time, like 8.2 - 
+//        aka billable hours
+//  
 
-// TODO: comparator method
-// TODO: less than and greater than methods
-// TODO: add and subtract methods
+// TODO: methods below
+
 
 public class TenthTime {
 
@@ -19,8 +20,8 @@ public class TenthTime {
   private int mins;
   private boolean type;
 
-  private static final boolean ABS = false;
-  private static final boolean REL = true;
+  static final boolean ABS = false;
+  static final boolean REL = true;
 
   public TenthTime() {
     hrs = mins = 0;
@@ -28,17 +29,26 @@ public class TenthTime {
   }
 
   public TenthTime(int hours, int minutes, boolean tType) {
+    // TODO boundary checking
     hrs = hours;
     mins = minutes;
-    type = Ttype;
+    type = tType;
   }
 
-  public putHrs(int hours) {
-    hrs = hours;
+  public void setHrs(int hours) {
+      // TODO boundary checking
+
+      hrs = hours;
   }
 
-  public putMins(int minutes) {
-    mins = minutes;
+  public void setMins(int minutes) {
+      // TODO boundary checking
+
+      mins = minutes;
+  }
+  
+  public void setType(boolean typeIn) {
+      type = typeIn;
   }
 
   public int getHrs() {
@@ -51,5 +61,55 @@ public class TenthTime {
 
   public boolean getType() {
     return type;
+  }
+  
+  public float toFloat() {  // Returns tenths
+    float newfloat = (float)this.hrs + roundUp((float)this.mins/60, 1);
+    return newfloat;
+  }
+  
+//  public String toString(TenthTime first) {
+//      
+//  }
+  
+//  public TenthTime plus(TenthTime first) {
+//      
+//  }
+  
+  public TenthTime minus(TenthTime smaller) {
+    
+    int finalmins = 0, finalhrs = 0;  // output is always rel.
+      
+    // if we have an abs - abs (most common) and its something like 5:23 - 9:22, assume the first number is PM.
+    if((this.type==ABS) && (smaller.getType() == ABS) && this.isLessThan(smaller)) hrs+=12;  
+
+    finalmins = this.getTimeInMins() - smaller.getTimeInMins();
+    finalhrs = finalmins / 60;
+    finalmins = finalmins % 60;        
+
+    return new TenthTime(finalhrs, finalmins, REL);
+    }
+  
+//  public boolean isGreaterThan(TenthTime first) {
+//      
+//  }
+  
+  public boolean isLessThan(TenthTime first) {
+      return(this.getTimeInMins() < first.getTimeInMins());
+  }
+  
+  private float roundUp(float num, int place) {
+      
+      // This is a standard rounding algorithm, using ceil to round up.
+      
+      float p = (float) Math.pow(10, place); 
+      num *= p;
+      num = (float) Math.ceil((double) num);
+      return (float) num/p;
+      
+  }
+  
+  private int getTimeInMins() {
+      return mins+(hrs*60);
   }
 }

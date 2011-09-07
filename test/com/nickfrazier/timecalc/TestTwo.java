@@ -1,7 +1,7 @@
 package com.nickfrazier.timecalc;
 
-import java.text.ParseException;
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -10,7 +10,9 @@ import junit.framework.TestCase;
 public class TestTwo extends TestCase {
 
     private ParseTime tp;
-    private Calendar testCal;
+    private List<String> testIn;
+    private List<TenthTime> testOut;
+    private TenthTime testTime;
     
     public TestTwo(String name) {
         super(name);
@@ -19,55 +21,55 @@ public class TestTwo extends TestCase {
     protected void setUp() {
     
         tp = new ParseTime();
-        testCal = Calendar.getInstance();
+        testTime = new TenthTime();
+        testIn = new ArrayList<String>();
+        testOut = new ArrayList<TenthTime>();
     }
     
     public void testReader() {
         
-        try {
-            testCal = tp.readTime("908a");
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        assertEquals(testCal.get(Calendar.AM_PM), Calendar.AM);
-        assertEquals(testCal.get(Calendar.HOUR), 9);
-        assertEquals(testCal.get(Calendar.MINUTE), 8);
-        // System.out.println(testCal.toString());
+        testIn.add("908a");
+        testIn.add("6:55a");
+        tp.readTime(testIn);
+        testOut =    tp.getTimes();
+        testTime =   testOut.get(0);
+//        float f1 =   testTime.toFloat();  // Really only meant for REL values. Rounding-up errors in ABS values
+                                            // Note that we could fix this by making a rounding-down method. Needed, though?
+        boolean b1 = testTime.getType();
+        int i1 =     testTime.getHrs();
+        int i2 =     testTime.getMins();
         
-        testCal.clear();
-        try {
-            testCal = tp.readTime("11:08 pm");
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        assertEquals(testCal.get(Calendar.AM_PM), Calendar.PM);
-        assertEquals(testCal.get(Calendar.HOUR_OF_DAY), 23);
-        assertEquals(testCal.get(Calendar.MINUTE), 8);
-        // System.out.println(testCal.toString());
+//        assertEquals(f1, (float) 9.2);
+        assertEquals(b1, TenthTime.ABS);
+        assertEquals(i1, 9);
+        assertEquals(i2, 8);
         
-        testCal.clear();
-        try {
-            testCal = tp.readTime("4:38");
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        assertEquals(tp.isAMPMKnown(), false);
-        assertEquals(testCal.get(Calendar.AM_PM), Calendar.AM);
-        assertEquals(testCal.get(Calendar.HOUR_OF_DAY), 4);
-        assertEquals(testCal.get(Calendar.MINUTE), 38);
+        testTime =   testOut.get(1);
+//        f1 =    testTime.toFloat();
+        b1 =    testTime.getType();
+        i1 =    testTime.getHrs();
+        i2 =    testTime.getMins();
+        
+//        assertEquals(f1, (float) 6.9);
+        assertEquals(b1, TenthTime.ABS);
+        assertEquals(i1, 6);
+        assertEquals(i2, 55);
  
-    }
-    
-    public void testTokens() {
+        testIn.clear();
+        testIn.add("6:15p");
+        testIn.add("7a");
+        tp.readTime(testIn);
+        testOut =    tp.getTimes();
+        testTime =   testOut.get(1);
+//        f1 =    testTime.toFloat();
+        b1 =    testTime.getType();
+        i1 =    testTime.getHrs();
+        i2 =    testTime.getMins();
         
-        String[] testTokens = tp.tokenizeTime("908a-900a");
-        assertEquals(testTokens[0], "908a");
-        assertEquals(testTokens[1], "900a");
-
+//        assertEquals(f1, (float) 7.0);
+        assertEquals(b1, TenthTime.ABS);
+        assertEquals(i1, 7);
+        assertEquals(i2, 0);
     }
     
-
 }

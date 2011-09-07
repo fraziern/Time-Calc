@@ -9,9 +9,10 @@ public class AllTests {
         TestSuite suite = new TestSuite(AllTests.class.getName());
         //$JUnit-BEGIN$
         suite.addTestSuite(TestTwo.class);
-        suite.addTestSuite(TestOne.class);
+        suite.addTestSuite(TestSix.class);      // TenthTime
         suite.addTestSuite(TestThree.class);
         suite.addTestSuite(TestFour.class);
+        suite.addTestSuite(TestSeven.class);    // LexTime
 
         //$JUnit-END$
         return suite;

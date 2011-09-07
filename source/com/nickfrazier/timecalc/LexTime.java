@@ -64,21 +64,21 @@ public class LexTime {
   return lexed;
   }
 
-  public static void main(String[] argv) {
-
-    System.out.println("--- Testing LexTime ---");
-    String in = new String(" 12:30a+ 1:30P -2.5");
-    List<String> out = new ArrayList<String>();
-    LexTime lex = new LexTime();
-    
-    out = lex.lexer(in);
-    
-    for(int i=0; i < out.size(); i++) {
-      System.out.println(out.get(i));
-    }
-
-    System.out.println("--- end ---");
-
-  }
+//  public static void main(String[] argv) {
+//
+//    System.out.println("--- Testing LexTime ---");
+//    String in = new String(" 12:30a+ 1:30P -2.5");
+//    List<String> out = new ArrayList<String>();
+//    LexTime lex = new LexTime();
+//    
+//    out = lex.lexer(in);
+//    
+//    for(int i=0; i < out.size(); i++) {
+//      System.out.println(out.get(i));
+//    }
+//
+//    System.out.println("--- end ---");
+//
+//  }
 
 }

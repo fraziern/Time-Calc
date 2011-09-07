@@ -21,8 +21,12 @@ public class TimeCalc {
     // entry = timeout - timein
     // timeout must be later than timein
     
-    // A separate class will parse strings.
-    // A separate class will provide the GUI.
+    // A separate class will parse strings. (2 classes: LexTime and ParseTime)
+    // Together, TimeCalc, ParseTime, and LexTime provide the Model code.
+    // A separate class will provide the View. (CalcGui)
+    // A separate class will be the Controller. (TimeCalcControl)
+    
+    // The time object model is contained in TenthTime class. All Model code uses this class.
     
     private float diff;
     private int decPlace;
