@@ -1,5 +1,6 @@
 package com.nickfrazier.timecalc;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,11 @@ public class TestSeven extends TestCase {
     
     public void testBasic() {
         
-        out = lex.lexer(in);
+        try {
+            out = lex.lexer(in);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         for(int i=0; i < out.size(); i++) {
             assertFalse(i==3);
             assertEquals(outArray[i], out.get(i));

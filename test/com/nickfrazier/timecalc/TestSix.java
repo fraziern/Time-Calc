@@ -44,6 +44,10 @@ public class TestSix extends TestCase {
 	      // 4) ToFloat
 	      float ans = (float) 8.4;
 	      assertEquals(ans, tt3.toFloat());
+	      
+	      // 5) ToFloatString
+	      String stAns = "8.4";
+	      assertEquals(stAns, tt3.toFloatString());
 	  } 
 	      
 	      

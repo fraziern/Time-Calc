@@ -5,6 +5,8 @@ package com.nickfrazier.timecalc;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Color;
+import java.text.ParseException;
 
 import javax.swing.*;
 
@@ -18,7 +20,6 @@ public class CalcGui {
     private JButton enter;
     private Font textFont;
 	
-// The following main method is used exclusively for testing.	
 	
 	public static void main (String[] args) {
 		CalcGui gui = new CalcGui();
@@ -62,9 +63,15 @@ public class CalcGui {
 		public void actionPerformed(ActionEvent e) {
 						
 		    fieldText = field.getText();
-		    labelText = controller.putGet(fieldText);         // Where the magic happens.
+		    try {
+                      labelText = controller.putGet(fieldText);
+                      // Where the magic happens.
+                      field.setCaretColor(null);
+                    } catch (ParseException f) {
+                      labelText = fieldText;
+                      field.setCaretColor(Color.RED);
+                    }
 		    field.setText(labelText);
-//		    field.selectAll();                                // Not sure if I like this behavior. 
 		    field.requestFocus();
 			
 		}

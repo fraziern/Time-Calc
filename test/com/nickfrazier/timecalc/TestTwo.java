@@ -1,5 +1,6 @@
 package com.nickfrazier.timecalc;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,12 @@ public class TestTwo extends TestCase {
         
         testIn.add("908a");
         testIn.add("6:55a");
-        tp.readTime(testIn);
+        try {
+            tp.readTime(testIn);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            fail("Exception.");
+        }
         testOut =    tp.getTimes();
         testTime =   testOut.get(0);
 //        float f1 =   testTime.toFloat();  // Really only meant for REL values. Rounding-up errors in ABS values
@@ -58,7 +64,13 @@ public class TestTwo extends TestCase {
         testIn.clear();
         testIn.add("6:15p");
         testIn.add("7a");
-        tp.readTime(testIn);
+        try {
+            tp.readTime(testIn);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            fail("Exception.");
+           
+        }
         testOut =    tp.getTimes();
         testTime =   testOut.get(1);
 //        f1 =    testTime.toFloat();

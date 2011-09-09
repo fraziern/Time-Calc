@@ -12,14 +12,13 @@ package com.nickfrazier.timecalc;
 //              C(controller): TimeCalcController class
 
 
-import java.util.Calendar;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TimeCalc {
-    // this class will find the difference between 2 times in a 24-hour period
-    
-    // 3 variables: timeout, timein, entry.
-    // entry = timeout - timein
-    // timeout must be later than timein
+    // this class will take an expression in string.
+    // and output a result out string.
     
     // A separate class will parse strings. (2 classes: LexTime and ParseTime)
     // Together, TimeCalc, ParseTime, and LexTime provide the Model code.
@@ -28,63 +27,58 @@ public class TimeCalc {
     
     // The time object model is contained in TenthTime class. All Model code uses this class.
     
-    private float diff;
-    private int decPlace;
-    public static final float ERROR = -1;
-    private static final int NOROUND = -1;
+    public static final int UNREADABLE_ERROR = 1;
+    
+    private String errorMsg = "";
     
     public TimeCalc() {
-        decPlace = 1;        // default is 1 decimal place rounding.
     }
     
-    public TimeCalc(int dec) {
-        decPlace = dec;
-    }
-     
-    public float getEntry(Calendar last, Calendar first){
+    public String process(String input) throws ParseException {
+      
+      // Reset error code
+      errorMsg = "";
         
-        // Calculates diff between timein and timeout.
-        // Returns ERROR if error.
-        
-//  These validators don't work any more.  Fix them.
-/*        if(timeout.getTime() == INIT.getTime()) {
-            System.out.println("Timeout is null!");
-            return -1;           
-        }
-        
-        if(timein.getTime() == INIT.getTime()) {
-            System.out.println("Timein is null!");
-            return -1;
-        }
-*/
-        
-        if(last.before(first)) last.add(Calendar.HOUR_OF_DAY, 12);
-        diff = last.getTimeInMillis() - first.getTimeInMillis();
-        diff = milsToHours(diff);
-        if(decPlace != NOROUND) diff = roundUp(diff, decPlace);
-           
-        return diff;
+      // Step 1 Lex and Parse
+
+      LexTime lt = new LexTime();
+      ParseTime pt = new ParseTime();
+      List<TenthTime> times = new ArrayList<TenthTime>();
+      List<String> lexedString = new ArrayList<String>();
+      
+      try {
+        lexedString = lt.lexer(input);
+      } catch (ParseException e) {
+          errorMsg = e.getMessage();
+          throw new ParseException(errorMsg, 0);
+      }
+    
+      pt.readTime(lexedString);
+      times = pt.getTimes();
+      
+      // Step 2 Crunch
+
+      TenthTime A = new TenthTime();
+      int num = times.size();
+
+      A = times.get(0);
+      for(int i=1; i < num; i++) {
+        // if minus
+        // Note that minus() can handle the common '5-9' notation
+        A = A.minus(times.get(i));
+      }
+      
+      // Step 3 Format and Output
+
+      return A.toFloatString();
+
+
        
     }
     
-    private float milsToHours(float mils){
-        // helper method to convert milliseconds to hours.
-        
-        return mils / 1000 / 60 / 60;
-    }
-    
-    
-    private float roundUp(float hours, int place) {
-        
-        // This is a standard rounding algorithm, using ceil to round up.
-        
-        float p = (float) Math.pow(10, place); 
-        hours *= p;
-        hours = (float) Math.ceil((double) hours);
-        return (float) hours/p;
-        
-    }
-    
+    public String lastError() { 
+        return errorMsg; 
+        }
     
 }
 

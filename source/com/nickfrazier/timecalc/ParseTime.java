@@ -1,5 +1,6 @@
 package com.nickfrazier.timecalc;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class ParseTime {
 
   public List<TenthTime> getTimes() { return this.times; }
 
-  public void readTime(List<String> in) {
+  public void readTime(List<String> in) throws ParseException {
 
     // init
     times = new ArrayList<TenthTime>();
@@ -68,7 +69,7 @@ public class ParseTime {
         
 
   }
-    private TenthTime readTenths(String time) {
+    private TenthTime readTenths(String time) throws ParseException {
 
         float tenths;
         int tenthsHours, tenthsMins;
@@ -77,13 +78,14 @@ public class ParseTime {
         tenths = Float.valueOf(time).floatValue();
         tenthsHours = (int) Math.floor(tenths);
         tenthsMins = Math.round((tenths - (float) tenthsHours) * 10 * 6);
-
+        
         // Build TenthTime
+        validate(tenthsHours, tenthsMins);
         return new TenthTime(tenthsHours, tenthsMins, TenthTime.REL);
     }
 
 
-    private TenthTime readHoursMins(String time) {
+    private TenthTime readHoursMins(String time) throws ParseException {
         
         int 
         hrs = 0,
@@ -126,10 +128,18 @@ public class ParseTime {
           if (digitCount > 2) 
             mins = (int) (digits[digitCount-2]*10+digits[digitCount-1]);
         } 
-        if(isPM && hrs < 13) hrs += 12;
+        if(isPM && hrs < 12) hrs += 12;   // 1-11 pm represented as 24 h time.
+        if(!isPM && hrs == 12) hrs = 0;   // 12am represented as 0.
         
         // Create TenthTime
+        validate(hrs, mins);
         return new TenthTime(hrs, mins, TenthTime.ABS);
 
+    }
+    
+    private void validate (int hours, int mins) throws ParseException {
+        if (hours < 0 || hours > 23 || mins < 0 || mins > 59) {
+            throw new ParseException("Time out of bounds.", 0);
+        }
     }
 }

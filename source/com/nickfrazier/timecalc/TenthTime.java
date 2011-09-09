@@ -29,7 +29,7 @@ public class TenthTime {
   }
 
   public TenthTime(int hours, int minutes, boolean tType) {
-    // TODO boundary checking
+    
     hrs = hours;
     mins = minutes;
     type = tType;
@@ -64,14 +64,16 @@ public class TenthTime {
   }
   
   public float toFloat() {  // Returns tenths
-    float newfloat = (float)this.hrs + roundUp((float)this.mins/60, 1);
-    return newfloat;
+    return (float)this.hrs + roundUp((float)this.mins/60, 1);
   }
   
-//  public String toString(TenthTime first) {
-//      
+  public String toFloatString() {
+    return Float.toString(this.toFloat());      
+  }
+
+//  public String toClockString() {
 //  }
-  
+
 //  public TenthTime plus(TenthTime first) {
 //      
 //  }
@@ -88,7 +90,8 @@ public class TenthTime {
     finalmins = finalmins % 60;        
 
     return new TenthTime(finalhrs, finalmins, REL);
-    }
+   
+ }
   
 //  public boolean isGreaterThan(TenthTime first) {
 //      

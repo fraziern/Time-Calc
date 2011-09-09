@@ -1,0 +1,7 @@
+This is a billable hour calculator I wrote as 1) a useful tool for 
+myself, and 2) as a working project for learning and playing with Java, 
+TDD, github, javadoc, and other programming-related tools and processes.
+
+The calculator has its foundations in the TenthTime class, which models
+a time entry and implementations of  various basic operations on those 
+time entries.
