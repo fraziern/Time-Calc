@@ -29,6 +29,7 @@ public class ParseTime {
   List<TenthTime> times;
   List<Integer> operators;
   int numTimes;
+  TimeTrainer spellcheck = new TimeTrainer();
 
   public static final int   // operators
   ADD = 0,
@@ -60,7 +61,7 @@ public class ParseTime {
       String s = tokens.get(i);
       if(s == "+") operators.add(ADD);
       else if(s == "-") operators.add(SUB);
-      
+            
         // We have a time. First scan to see if it's absolute or relative.
       else if(s.matches(".*[.].*"))   // regex that looks for at least one period
         times.add(readTenths(s));

@@ -80,5 +80,27 @@ public class TimeCalc {
         return errorMsg; 
         }
     
+    public String getCorrect(String s) throws ParseException {
+        
+        LexTime lt = new LexTime();
+        List<String> lexedString = new ArrayList<String>();
+        List<String> fixedString = new ArrayList<String>();
+        TimeTrainer spellcheck = new TimeTrainer();
+        
+        try {
+          lexedString = lt.lexer(s);
+        } catch (ParseException e) {
+            errorMsg = e.getMessage();
+            throw new ParseException(errorMsg, 0);
+        }
+        
+        fixedString = spellcheck.correktor(lexedString);
+        String out = "";
+        for(String t : fixedString) {
+            out += t;
+        }
+        return out;
+    }
+    
 }
 

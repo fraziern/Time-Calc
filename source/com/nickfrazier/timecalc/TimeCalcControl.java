@@ -19,5 +19,19 @@ public class TimeCalcControl {
       return output;
 
     }
+    
+    public String getCorrect(String bad) throws ParseException {
+        
+        String out = new String();
+        // fix
+        try {
+        out = tc.getCorrect(bad);
+        }
+        catch (ParseException e) {
+            throw new ParseException(e.getMessage(), 0); 
+        }
+        
+        return out;
+    }
 
 }

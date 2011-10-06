@@ -14,6 +14,7 @@ public class CalcGui {
     
     private JFrame frame;
     private JTextField field;
+    private JLabel label;
     private String fieldText;
     private String labelText;
     private TimeCalcControl controller = new TimeCalcControl();
@@ -44,6 +45,7 @@ public class CalcGui {
 		field = new JTextField(20);
 	        field.setFont(textFont);
 		enter = new JButton("=");
+		label = new JLabel();
 		
 		field.addActionListener(new TextFieldListener());
 		enter.addActionListener(new TextFieldListener());
@@ -51,6 +53,7 @@ public class CalcGui {
 		//Gui Step 3: Add component to frame
 		frame.getContentPane().add(BorderLayout.NORTH, field);
 	        frame.getContentPane().add(BorderLayout.EAST, enter);
+	        frame.getContentPane().add(BorderLayout.WEST, label);
 		
 		//Gui Step 4: Display it!
 		frame.setSize(400,100);
@@ -67,9 +70,15 @@ public class CalcGui {
                       labelText = controller.putGet(fieldText);
                       // Where the magic happens.
                       field.setCaretColor(null);
+                      label.setText("");
                     } catch (ParseException f) {
                       labelText = fieldText;
                       field.setCaretColor(Color.RED);
+                      try {
+                          label.setText("Did you mean " + controller.getCorrect(fieldText) + "?");
+                      } catch (ParseException g) {
+                          label.setText("ParseException 2");
+                      }
                     }
 		    field.setText(labelText);
 		    field.requestFocus();
