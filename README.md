@@ -1,4 +1,4 @@
-# Purpose
+# How Many Hours Did I Work Today? Find out instantly with Time-Calc
 This is a billable hour calculator I wrote as:
 * a useful tool for myself, and;
 * as a working project for learning Java, TDD, github, javadoc, and other programming-related tools and processes.
